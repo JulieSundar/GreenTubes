@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/semantic.min.css">
+
+  <title>GreenTubes Dashboard / Fabacademy 2019 </title>
+
+  <script type="text/javascript" src="js/socket.io.min.js"></script>
+  <script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+<style>
+		input[type="checkbox"]{
+		  visibility:hidden;
+		}
+		#checklabel{
+		  height:40px;
+		  width:40px;
+		  background-color:green;
+		  display:block;
+		  border-radius:100%;
+		}
+		input[type="checkbox"]:checked + label{
+		  border:2px solid red;
+		}
+</style>
+
+  <script type="text/javascript">
+    var socket = io.connect('192.168.1.150:5000');
+      socket.on('connect', function () {
+        socket.on('mqtt', function (msg) {
+          var msgTopic=msg.topic.split("/");
+          var topic=msgTopic[2];
+          var id=msgTopic[3];
+          console.log(msg.topic+' '+msg.payload);
+          console.log(topic.concat(id));
+          $('#'+topic.concat(id)).html(msg.payload);
+       });
+       socket.emit('subscribe',{topic:'/ESP/#'});
+//###
+	  //$('input.cb-value').prop("checked", true);
+		$('.cb-value').click(function() {
+		  var mainParent = $(this).parent('.toggle-btn');
+		  if($(mainParent).find('input.cb-value').is(':checked')) {
+			$(mainParent).addClass('active');
+			socket.emit('control',{'topic':"/ESP/"+ $(this).parents('div').attr('id'),'payload':"on"});
+			//io.sockets.emit('mqtt',"/ESP/unit2/pump=on");
+			//socket.emit('opencmd', id);
+		  } else {
+			$(mainParent).removeClass('active');
+			socket.emit('control',{'topic':"/ESP/"+ $(this).parents('div').attr('id'),'payload':"off"});
+			//io.sockets.emit('mqtt',"/ESP/unit2/pump=off");
+			//socket.emit('closecmd', id);
+		  }
+
+		});
+//###
+
+      });
+	  
+
+  </script>
+  
+</head>
+
+<body>
+
+<p><img class="logo" src="img/logo.png" height="10%" width="10%">
+<h4 class="ui center dividing aligned header">GreenTubes Dashboard / Fabacademy 2019 </h4>
+</p>
+
+<div class="wrapper">
+<div class="section group">
+<!--Temp-->
+	<div class="col span_1_of_5">
+    <div class="ui cards">
+      <div class="card">
+        <div class="content">
+          <img class="right floated mini ui image" src="img/thermometer.png">
+          <div class="header">
+            Temperature
+          </div>
+          <div class="meta">
+            Dht11 Sensor
+          </div>
+          <div class="description"></div>
+        </div>
+        <div style="text-align:center;" class="extra content centered">
+          <div class="ui labeled button" tabindex="0">
+        <div id="Temperature33" class="ui basic blue button">
+          <div class="ui active small inline loader"></div>
+          </div>
+            <button class="ui basic left pointing blue label">°C</button>
+          </div>
+        </div>
+      </div>
+    </div>
+	</div>
+	<!--Humidity-->
+	<div class="col span_1_of_5">
+    <div class="ui cards">
+      <div class="card">
+        <div class="content">
+          <img class="right floated mini ui image" src="img/humidity.png">
+          <div class="header">
+            Humidity
+          </div>
+          <div class="meta">
+            DHT22 Sensor
+          </div>
+          <div class="description"></div>
+        </div>
+        <div style="text-align:center;" class="extra content centered">
+          <div class="ui labeled button" tabindex="0">
+        <div id="Humidity33" class="ui basic blue button">
+          <div class="ui active small inline loader"></div>
+          </div>
+            <button class="ui basic left pointing blue label">%</button>
+          </div>
+        </div>
+      </div>
+    </div>
+	</div>
+	
+	<!--Soil-->
+	<div class="col span_1_of_5">
+    <div class="ui cards">
+    <div class="card">
+      <div class="content">
+        <img class="right floated mini ui image" src="img/soil.png">
+        <div class="header">
+          Soil Moisture
+        </div>
+        <div class="meta">
+          Yl-69 Sensor
+        </div>
+        <div class="description">
+        </div>
+      </div>
+      <div style="text-align:center;" class="extra content centered">
+        <div class="ui labeled button" tabindex="0">
+      <div id="Soil33" class="ui basic blue button">
+        <div class="ui active small inline loader"></div>
+        </div>
+          <button class="ui basic left pointing blue label">%</button>
+        </div>
+      </div>
+    </div>
+  </div>
+	</div>
+<!--Battery Life-->
+<!--<div class="col span_1_of_5">
+    <div class="ui cards">
+    <div class="card">
+      <div class="content">
+        <img class="right floated mini ui image" src="img/battery.png">
+        <div class="header">
+           Battery Life
+        </div>
+        <div class="meta">NodeMCU
+        </div>
+        <div class="description"></div>
+      </div>
+      <div style="text-align:center;" class="extra content centered">
+        <div class="ui labeled button" tabindex="0">
+      <div id="Uptime31" class="ui basic blue button">
+        <div class="ui active small inline loader"></div>
+        </div>
+          <button class="ui basic left pointing blue label">min</button>
+        </div>
+      </div>
+    </div>
+  </div>
+	</div>-->
+
+<!--Pump Control-->
+
+	<div class="col span_1_of_5">
+    <div class="ui cards">
+      <div class="card">
+        <div class="content">
+          <img class="right floated mini ui image" src="img/pump.png">
+          <div class="header">
+            Pump Control
+          </div>
+          <div class="meta">
+            Status
+          </div>
+          <div class="description"></div>
+        </div>
+        <div style="text-align:center;" class="extra content centered">
+          <div class="ui labeled button" tabindex="0">
+        <div id="Soil33">
+          <!--<div class="ui active small inline loader"></div>-->
+          </div>
+            <!--<button class="ui basic left pointing blue label">Button</button>-->
+		<input value="1" type="checkbox" id="mycheck" checked class="cb-value" />
+		<label id="checklabel" for="mycheck" checked class="cb-value">
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+<!--TEST BUTTON 1 -->
+<div id="pump/33/" class="toggle-btn active">
+  <input type="checkbox"  checked class="cb-value" />
+  <span class="round-btn"></span>
+  
+</div>
+  
+
+</label>
+
+</div>
+</div>
+</div>
+</body>
+</html>
